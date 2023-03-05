@@ -1,0 +1,110 @@
+﻿@model IPagedList<MyProject01.Models.Books>
+@using PagedList;
+@using PagedList.Mvc;
+@{
+    bool isLoggedIn = true;
+    if (string.IsNullOrWhiteSpace(User.Identity.Name))
+    {
+        isLoggedIn = false;
+    }
+}
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Available Books</h2>
+
+@{
+    if (isLoggedIn)
+    {
+        <p>Welcome to My Book Store!</p>
+    }
+    else
+    {
+        <p>@Html.ActionLink("Please Login First! ", "Login", "Account")</p>
+    }
+}
+
+@using (Html.BeginForm("Index", "Books", FormMethod.Get))
+{
+    <p>
+        Search: @Html.TextBox("SearchString")
+        <input type="submit" value="Search" />
+    </p>
+}
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.ActionLink("ID", "Index", new { sortOrder = ViewBag.IDSortParm, searchString = Request.QueryString["SearchString"] })
+        </th>
+        <th>
+            @Html.ActionLink("BookId", "Index", new { sortOrder = ViewBag.BookIdSortParm, searchString = Request.QueryString["SearchString"] })
+        </th>
+        <th>
+            @Html.ActionLink("Title", "Index", new { sortOrder = ViewBag.TitleSortParm, searchString = Request.QueryString["SearchString"] })
+        </th>
+        <th>
+            @Html.ActionLink("Category", "Index", new { sortOrder = ViewBag.CategorySortParm, searchString = Request.QueryString["SearchString"] })
+        </th>
+        <th>
+            @Html.ActionLink("Author", "Index", new { sortOrder = ViewBag.AuthorSortParm, searchString = Request.QueryString["SearchString"] })
+        </th>
+        <th>
+            @Html.ActionLink("Price", "Index", new { sortOrder = ViewBag.PriceSortParm, searchString = Request.QueryString["SearchString"] })
+        </th>
+        <th>
+            @Html.ActionLink("Language", "Index", new { sortOrder = ViewBag.LanguageSortParm, searchString = Request.QueryString["SearchString"] })
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BookId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Author)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Language)
+            </td>
+
+            @{
+                if (isLoggedIn)
+                {
+                    <td>
+                        @Html.ActionLink("Reserve", "Reserve", new { id = item.BookId.ToString() })
+                    </td>
+                }
+                else
+                {
+                    <td></td>
+                }
+
+            }
+
+        </tr>
+    }
+
+</table>
+<br />
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+    @Html.PagedListPager(Model, page => Url.Action("Index",
+        new { page,  searchString = Request.QueryString["SearchString"], sortOrder = Request.QueryString["sortOrder"] }),
+        new PagedListRenderOptions() { Display = PagedListDisplayMode.IfNeeded })

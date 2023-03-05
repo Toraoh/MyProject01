@@ -1,0 +1,18 @@
+﻿@model MyProject01.Models.Books
+
+@{
+    ViewBag.Title = "Submit";
+}
+
+<h2>Submit</h2>
+
+<div>
+    <h4>You have successfully reserve this book!</h4>
+
+    <h4>Your order: @ViewBag.OrderId</h4> 
+</div>
+
+
+<p>
+    @Html.ActionLink("Back to List", "Index") 
+</p>
